@@ -1,26 +1,27 @@
+#
 # vim: ts=8 noet sw=8:
-# Makefile to build mlburg from sources. Not intended for development.
 #
 
-NAME =		mlburg
-VERSION =	1.0
 
-OCAML =		ocaml
-OCAMLC =	ocamlc 
-OCAMLO =	ocamlopt 
-OCAMLTOP =	ocamlmktop
-OCAMLDEP =	ocamldep
-OCAMLYACC =	ocamlyacc
-OCAMLLEX =	ocamllex
+TOP := 			.
+include 		$(TOP)/config.mk
 
-NOFAKE =	perl -- nofake
+NAME        		:= ocamlburg
+BINDIR      		:= $(PREFIX)/bin
+MAN1DIR     		:= $(PREFIX)/man/man1
+
+INCLUDES 		:=
+OCAMLC_FLAGS            := -g -dtypes -I $(INCLUDES)
+OCAMLOPT_FLAGS          := -p -dtypes -I $(INCLUDES)
+OCAMLOPT_FLAGS          := -p -dtypes -I $(INCLUDES)
+OCAMLOPT_FLAGS          :=    -dtypes -I $(INCLUDES)
+
 
 # ------------------------------------------------------------------ 
-# high level targets
+# high-level targets
 # ------------------------------------------------------------------ 
 
-all:		ocamlburg      runtime	   examples
-all.opt:	ocamlburg.opt  runtime.opt examples.opt
+all: 		$(NAME).$(BINEXT) runtime.$(BINEXT) examples.$(BINEXT)
 
 # ------------------------------------------------------------------ 
 # rules
@@ -44,22 +45,22 @@ all.opt:	ocamlburg.opt  runtime.opt examples.opt
 		$(OCAMLYACC) -v $<
 
 %.ml:		%.nw
-		$(NOFAKE) -L'# %L "%F"%N' -R$@ $< > $@
+		$(NOTANGLE) -L'# %L "%F"%N' -R$@ $< > $@
 
 %.mli:		%.nw
-		$(NOFAKE) -L'# %L "%F"%N' -R$@ $< > $@
+		$(NOTANGLE) -L'# %L "%F"%N' -R$@ $< > $@
 		
 # ------------------------------------------------------------------ 
 # special rules to resolve ambiguities
 # ------------------------------------------------------------------ 
 
 parse.mly:	parse.nw
-		$(NOFAKE) -R$@ $< > $@
+		$(NOTANGLE) -R$@ $< > $@
 
 parse.ml:	parse.mly
 
 lex.mll:	lex.nw
-		$(NOFAKE) -R$@ $< > $@
+		$(NOTANGLE) -R$@ $< > $@
 		
 lex.ml:		lex.mll		
 
@@ -91,7 +92,20 @@ MLI =		pp.mli		\
 		parseerror.mli	\
 		spec.mli	\
 
-SCAN =		$ML $MLI \
+NW := 		burg.nw 	\
+		camlburg.nw 	\
+		code.nw 	\
+		lex.nw 		\
+		main.nw 	\
+		mangler.nw 	\
+		noguardscheck.nw\
+		norm.nw 	\
+		parse.nw 	\
+		parseerror.nw 	\
+		sample.nw 	\
+		spec.nw 	\
+
+SCAN =		$(ML) $(MLI) \
 		camlburg.ml camlburg.mli\
 		sampleclient.ml\
 
@@ -103,7 +117,7 @@ CMX =		$(addsuffix .cmx,$(basename $(ML)))
 # binaries
 # ------------------------------------------------------------------ 
 
-ocamlburg:	$(CMO)
+ocamlburg.byte:	$(CMO)
 		$(OCAMLC) $(OCAMLC_FALGS) -o $@ $(CMO)
 
 ocamlburg.opt:	$(CMX)
@@ -114,25 +128,28 @@ ocamlburg.opt:	$(CMX)
 # ------------------------------------------------------------------ 
 
 sample.mlb:	sample.nw
-		$(NOFAKE) -L'# %L "%F"%N' -R$@ $< > $@
+		$(NOTANGLE) -L'# %L "%F"%N' -R$@ $< > $@
 
 sampleclient.ml:    sample.nw
-		$(NOFAKE) -L'# %L "%F"%N' -R$@ $< > $@
+		$(NOTANGLE) -L'# %L "%F"%N' -R$@ $< > $@
 		
 iburg.ml:	iburg.mlb ocamlburg runtime
-		./ocamlburg iburg.mlb > $@
+		./$(NAME).$(BINEXT) iburg.mlb > $@
 
 sample.ml:	sample.mlb ocamlburg runtime
-		./ocamlburg sample.mlb > $@
+		./$(NAME).$(BINEXT) sample.mlb > $@
 
-runtime:	camlburg.ml camlburg.cmo camlburg.cmi camlburg.mli
+runtime.byte:	camlburg.ml camlburg.cmo camlburg.cmi camlburg.mli
 runtime.opt:	camlburg.ml camlburg.cmx camlburg.cmi camlburg.mli camlburg.o
 
-examples:	iburg.cmo sample.cmo sampleclient.cmo
+examples.byte:	iburg.cmo sample.cmo sampleclient.cmo
 examples.opt:	iburg.cmx sample.cmx sampleclient.cmx
 
 # ------------------------------------------------------------------ 
-# includes
+# dependencies
 # ------------------------------------------------------------------ 
 
-include	DEPEND.evaluating
+DEPEND:     	$(SCAN)
+		$(OCAMLDEP) -I $(INCLUDES) $(ML) $(MLI) > DEPEND   
+
+include	DEPEND
