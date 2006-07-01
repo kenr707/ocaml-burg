@@ -144,8 +144,8 @@ Mostly used for debugging during development.
 
 <<exported values>>=
 module PrettyPrint: sig
-    val rule:   rule      -> Pp.doc
-    val rules:  rule list -> Pp.doc
+    val rule:   rule      -> Pretty.t
+    val rules:  rule list -> Pretty.t
 end
 @
 
@@ -291,17 +291,26 @@ Currently we have only pretty-printing for rules implemented and not the
 declarations that are also part of a specification.
 
 <<PrettyPrint>>=
-module P = Pp
+module P = Pretty
 
-let (^^)   = P.(^^)     (* concat *)
-let (^/)   = P.(^/)     (* concat with break *)
-let (~~) x = x          (* used for uniformity *)
+let (^^)      = P.cat               (* concat *)
+let (^/) x y  = x^^P.break^^y       (* concat with break *)
+let (~~) x = x                      (* used for uniformity *)
+
+let rec intersperse sep f xs =
+    let rec loop acc = function
+        | []    -> acc
+        | [x]   -> acc ^^ f x 
+        | x::xs -> loop (acc ^^ f x ^^ sep) xs
+    in
+        loop P.empty xs 
+
 
 let nest   = P.nest 4
 
 (* nested automatic group - most versatile *)
 let angrp x =
-    P.agrp begin 
+    P.group begin 
     ~~ nest begin
        ~~ x
        end
@@ -324,7 +333,7 @@ let rec pattern = function
         angrp begin
         ~~ lit s
         ^^ P.text "(" 
-        ^^ P.list (P.text "," ^^ P.break) pattern args
+        ^^ intersperse (P.text "," ^^ P.break) pattern args
         ^^ P.text ")"
         end
 
@@ -345,8 +354,7 @@ let rule r =
        end
     end
 
-let rules rs =
-    P.vgrp (P.list P.break rule rs ^^ P.break)
+let rules rs = intersperse P.break rule rs ^^ P.break
 @
 
 

@@ -10,11 +10,10 @@ NAME        		:= ocamlburg
 BINDIR      		:= $(PREFIX)/bin
 MAN1DIR     		:= $(PREFIX)/man/man1
 
-INCLUDES 		:=
-OCAMLC_FLAGS            := -g -dtypes -I $(INCLUDES)
-OCAMLOPT_FLAGS          := -p -dtypes -I $(INCLUDES)
-OCAMLOPT_FLAGS          := -p -dtypes -I $(INCLUDES)
-OCAMLOPT_FLAGS          :=    -dtypes -I $(INCLUDES)
+OCAMLC_FLAGS            := -g -dtypes 
+OCAMLOPT_FLAGS          := -p -dtypes 
+OCAMLOPT_FLAGS          := -p -dtypes 
+OCAMLOPT_FLAGS          :=    -dtypes 
 
 
 # ------------------------------------------------------------------ 
@@ -34,7 +33,7 @@ all: 		$(NAME).$(BINEXT) runtime.$(BINEXT) examples.$(BINEXT)
 		$(OCAMLC) $(OCAMLC_FLAGS) -c $<
 
 %.o %.cmx:	%.ml
-		$(OCAMLO) $(OCAMLO_FLAGS) -c $<
+		$(OCAMLOPT) $(OCAMLO_FLAGS) -c $<
 
 %.ml:		%.mll
 		$(OCAMLLEX) $<
@@ -68,7 +67,7 @@ lex.ml:		lex.mll
 # files
 # ------------------------------------------------------------------ 
 
-ML =		pp.ml		\
+ML =		pretty.ml 	\
 		srcmap.ml	\
 		code.ml		\
 		mangler.ml	\
@@ -81,7 +80,7 @@ ML =		pp.ml		\
                 noguardscheck.ml\
 		main.ml		\
 		
-MLI =		pp.mli		\
+MLI =		pretty.mli 	\
 		srcmap.mli	\
 		burg.mli	\
 		code.mli	\
@@ -121,7 +120,7 @@ ocamlburg.byte:	$(CMO)
 		$(OCAMLC) $(OCAMLC_FALGS) -o $@ $(CMO)
 
 ocamlburg.opt:	$(CMX)
-		$(OCAMLO) $(OCAMLO_FLAGS) -o $@ $(CMX)
+		$(OCAMLOPT) $(OCAMLO_FLAGS) -o $@ $(CMX)
 
 # ------------------------------------------------------------------ 
 # runtime code, examples
@@ -133,11 +132,11 @@ sample.mlb:	sample.nw
 sampleclient.ml:    sample.nw
 		$(NOTANGLE) -L'# %L "%F"%N' -R$@ $< > $@
 		
-iburg.ml:	iburg.mlb ocamlburg runtime
-		./$(NAME).$(BINEXT) iburg.mlb > $@
+iburg.ml:	iburg.mlb $(NAME).$(BINEXT) runtime.$(BINEXT)
+		./$(NAME).$(BINEXT) iburg.mlb | ./ocamlburgfix $@
 
-sample.ml:	sample.mlb ocamlburg runtime
-		./$(NAME).$(BINEXT) sample.mlb > $@
+sample.ml:	sample.mlb $(NAME).$(BINEXT) runtime.$(BINEXT)
+		./$(NAME).$(BINEXT) sample.mlb | ./ocamlburgfix $@
 
 runtime.byte:	camlburg.ml camlburg.cmo camlburg.cmi camlburg.mli
 runtime.opt:	camlburg.ml camlburg.cmx camlburg.cmi camlburg.mli camlburg.o
@@ -150,6 +149,6 @@ examples.opt:	iburg.cmx sample.cmx sampleclient.cmx
 # ------------------------------------------------------------------ 
 
 DEPEND:     	$(SCAN)
-		$(OCAMLDEP) -I $(INCLUDES) $(ML) $(MLI) > DEPEND   
+		$(OCAMLDEP) $(SCAN) > DEPEND   
 
 include	DEPEND
