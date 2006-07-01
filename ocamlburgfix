@@ -1,9 +1,11 @@
-#! /usr/bin/perl -w
+#! /usr/bin/env perl
 #
 # $Id: ocamlburgfix,v 1.6 2004-11-02 20:43:34 nr Exp $
 #  
 # Usage: ocamlburg foo.mlb | ./ocamlburgfix foo.ml 
 # See documentation below.
+
+use warnings;
 
 if ($#ARGV != 0) {
     print STDERR "usage   : $0 file.ml\n";
