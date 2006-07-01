@@ -4,9 +4,12 @@
 
 
 TOP := 			.
-include 		$(TOP)/config.mk
+include 		config.mk
 
-NAME        		:= ocamlburg
+config.mk: 		configure
+			echo "Have you run ./configure? Please do."
+			exit 1
+
 BINDIR      		:= $(PREFIX)/bin
 MAN1DIR     		:= $(PREFIX)/man/man1
 
@@ -20,7 +23,31 @@ OCAMLOPT_FLAGS          :=    -dtypes
 # high-level targets
 # ------------------------------------------------------------------ 
 
-all: 		$(NAME).$(BINEXT) runtime.$(BINEXT) examples.$(BINEXT)
+.PHONY: 	all clean install
+
+all: 		ocamlburg.$(BINEXT) runtime.$(BINEXT) examples.$(BINEXT)
+
+clean:
+		rm -f *.cmo *.cmx *.o *.cmi *.ml *.mli *.mll *.mly
+		rm -f *.byte *.opt 
+		rm -f *.output *.annot
+
+clobber: 	clean
+		rm -f config.mk
+
+
+install: 	ocamlburg.$(BINEXT) dirs
+		cp ocamlburg.$(BINEXT) $(BINDIR)/ocamlburg
+		cp ocamlburgfix $(BINDIR)
+		cp ocamlburgfix.1 $(MAN1DIR)
+		cp ocamlburg.1    $(MAN1DIR)
+		# todo: install runtime files camlburg.*
+		
+
+dirs: 		$(BINDIR) $(MAN1DIR)
+		test -d $(BINDIR)  || mkdir -p $(BINDIR)
+		test -d $(MAN1DIR) || mkdir -o $(MAN1DIR)
+
 
 # ------------------------------------------------------------------ 
 # rules
@@ -132,11 +159,11 @@ sample.mlb:	sample.nw
 sampleclient.ml:    sample.nw
 		$(NOTANGLE) -L'# %L "%F"%N' -R$@ $< > $@
 		
-iburg.ml:	iburg.mlb $(NAME).$(BINEXT) runtime.$(BINEXT)
-		./$(NAME).$(BINEXT) iburg.mlb | ./ocamlburgfix $@
+iburg.ml:	iburg.mlb ocamlburg.$(BINEXT) runtime.$(BINEXT)
+		./ocamlburg.$(BINEXT) iburg.mlb | ./ocamlburgfix $@
 
-sample.ml:	sample.mlb $(NAME).$(BINEXT) runtime.$(BINEXT)
-		./$(NAME).$(BINEXT) sample.mlb | ./ocamlburgfix $@
+sample.ml:	sample.mlb ocamlburg.$(BINEXT) runtime.$(BINEXT)
+		./ocamlburg.$(BINEXT) sample.mlb | ./ocamlburgfix $@
 
 runtime.byte:	camlburg.ml camlburg.cmo camlburg.cmi camlburg.mli
 runtime.opt:	camlburg.ml camlburg.cmx camlburg.cmi camlburg.mli camlburg.o
@@ -152,3 +179,7 @@ DEPEND:     	$(SCAN)
 		$(OCAMLDEP) $(SCAN) > DEPEND   
 
 include	DEPEND
+
+# ------------------------------------------------------------------ 
+
+
