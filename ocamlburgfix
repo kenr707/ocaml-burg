@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# $Id: ocamlburgfix,v 1.6 2004-11-02 20:43:34 nr Exp $
+# $Id$
 #  
 # Usage: ocamlburg foo.mlb | ./ocamlburgfix foo.ml 
 # See documentation below.
