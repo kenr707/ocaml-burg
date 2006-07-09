@@ -1,7 +1,7 @@
 vim: set ts=8 et sw=4: 
 
 ------------------------------------------------------------------
- $Id: README,v 1.10 2003-08-04 16:49:12 lindig Exp $
+ $Id$
 ------------------------------------------------------------------  
 
                             OCamlBurg
@@ -15,52 +15,52 @@ Letters on Programming Languages and Systems 1, 3 (Sep 1992), 213-226.
 Documentation
 ~~~~~~~~~~~~~
 
-OCamlBurg comes with a Unix style manual page formatted both as Troff
-and HTML documents: ocammlburg.1 and ocamlburg-man.html. It might still
-be a good idea to read the paper mentioned above. The example from the
-paper comes as iburg.ml and another example as sample.mlb. 
+OCamlBurg comes with a Unix style manual page ocammlburg.1. To view it,
+use nroff(1):
+
+    nroff -man ocamlburg.1 
+
+After installation, the manual page is available as ``man ocamlburg''
+through the man(1) command.  It might still be a good idea to read the
+paper mentioned above. The example from the paper comes as iburg.ml and
+another example as sample.mlb. 
 
 Building from Sources
 ~~~~~~~~~~~~~~~~~~~~~
 
-OCamlBurg is implemented in Objective Caml 3.0[46] as a literate program in
-the Noweb literate programming system. The source code is in so-called
-noweb files (*.nw) from where the Objective Caml source code and
-documentation are extracted. The distribution includes the doucmentation
-in HTML format and the tool "nofake" to extract the Objective Caml
-source code. To compile everything you need:
+OCamlBurg is implemented in Objective Caml 3.0[46] as a literate program
+in the Noweb literate programming system. The source code is in
+so-called noweb files (*.nw) from where the Objective Caml source code
+and documentation are extracted. The distribution includes the tool
+"nofake" to extract the Objective Caml source code. To compile
+everything you need:
 
     Objective Caml 3.0[46]  (3.0[123] should work, but untested)
-    Perl                    for nofake
+    Perl                    for nofake, ./configure
     GNU Make                 
 
-Check the Makefile and type 'make all'. The result are the following
-files:
+Run ./configure, followed by make. The configure script takes an
+optional argument --prefix where files get installed in the file system. 
 
-    ocamlburg
-    ocamlburg.opt   byte code and native code binary of the compiler
-    camlburg.ml 
-    camlburg.mli    runtime module for code generated with mlburg
+    ./configure --prefix=/usr/local
+    make
+    make install
 
-An install target is provided by we reccomend you modify it to your
-needs. There is in particular no convention where to install the runtime
-files.
-
-OCamlBurg is part of the Quick C-- compiler project
-(http://www.cminusminus.org) that uses Plan 9 mk(1) instead of make(1),
-noweb(1) and various other tools that probably are not immediately
-available for everybody interested in OCamlBurg. The distribution therefore
-comes with documentation and some other files prebuilt to minimize the
-number of required tools. Somebody interested in serious work on the
-source thus might want to use the same tool chain or has to build his or
-her own.
+An install target is provided by we reccomend you modify it in Makefile
+to your needs. There is in particular no convention where to install the
+runtime files.
 
 
 Download
 ~~~~~~~~
 
-OCamlBurg is part of the Quick C-- compiler project:
-http://www.cminusminus.org/
+OCamlBurg is part of the Quick C-- compiler project: 
+
+    http://www.cminusminus.org/. 
+
+This version here is taken from there man maintained independently:
+
+    https://trac.vistabella.de/ocamlburg/
 
 Authors
 ~~~~~~~

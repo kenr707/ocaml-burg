@@ -71,7 +71,7 @@ val to_file:   out_channel -> int -> t -> unit
 @
 
 % ------------------------------------------------------------------  
-\implementation{Implementation}
+\subsection{Implementation}
 % ------------------------------------------------------------------ 
 
 <<pretty.ml>>=

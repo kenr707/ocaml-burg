@@ -217,20 +217,24 @@ What we need to know to generate Twelf:
 
 data:
 
+\begin{verbatim}
 goal types.
 literal types used.
 literals used.
 constructor types.
 chain rule (type <- type).
 non-chain rule (type <- pattern, var*type list).
+\end{verbatim}
 
 operations:
 
+\begin{verbatim}
 literal type * literals in code -> next unused literal.
 
 unused_int_literal    : int list    -> int
 unused_string_literal : string list -> string
 unused_char_literal   : char list   -> char
+\end{verbatim}
 
 <<auxiliary functions>>=
 let compose f g x = f (g x)
@@ -281,7 +285,7 @@ let unused_char_literal chars =
 
 burg rules -> constructor types.
 
-constructor_types : S.rules -> (string * string list) list
+[[constructor_types : S.rules -> (string * string list) list]]
 
 <<twelf code generation functions>>=
 let return_type = function
