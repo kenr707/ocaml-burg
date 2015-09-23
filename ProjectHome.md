@@ -1,0 +1,5 @@
+OCamlburg is a code generator generator that emits Objective Caml source code. Conceptually, OCamlburg is close to tools like OCamlYacc and OCamlLex: it reads a specification and emits code derived from this specification. Just as these tools, OCamlburg is most useful for compiler writers. While Lex and Yacc are typically used to generate compiler front ends, OCamlburg (and Burg-style code generators in general) are used to implement compiler back ends, that is, code emitters.
+
+For documentation, see the [OCamlBurg](OCamlBurg.md) page in the Wiki. A manual page and examples are part of the source code.
+
+OCamlburg is originally part of the [QuickC--](http://www.cminusminus.org/) compiler project, where you can still find it. However, since it is a little burried there, I am making it available here on its own. The QuickC-- compiler is released into the public domain. Since this license is not available here, I have chosen the also very liberal BSD License.
